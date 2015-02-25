@@ -86,7 +86,19 @@ def non_top_pkg_src(_req, pkg):
     :rtype: string
 
     """
-    return top_pkg_src(pkg)
+    vers = []
+    req_ver = req_version(req)
+    if req_ver:
+        vers.append(('required', req_ver))
+    # if pkg:
+    #     vers.append(('installed', pkg.version))
+    if not vers and not pkg:
+        return req.key
+    if vers:
+        ver_str = ', '.join(['{0}: {1}'.format(k, v) for k, v in vers])
+        return '{0} # [{1}]'.format(top_pkg_src(pkg), ver_str)
+    else:
+        return top_pkg_src(pkg)
 
 
 def has_multi_versions(reqs):
@@ -162,7 +174,7 @@ def render_tree(pkgs, pkg_index, req_map, list_all,
                 if d.project_name not in chain]
             result += list(flatten(filtered_deps))
         if pkg.key in skip or pkg.key in printed:
-            result[0] = "# " + result[0]
+            result[0] = "# " + result[0].replace("\n", " ")
         printed.add(pkg.key)
         return result
 
