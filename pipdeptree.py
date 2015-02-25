@@ -114,7 +114,7 @@ def confusing_deps(req_map):
 
 
 def render_tree(pkgs, pkg_index, req_map, list_all,
-                top_pkg_str, non_top_pkg_str):
+                top_pkg_str, non_top_pkg_str, skip):
     """Renders a package dependency tree as a string
 
     :param list pkgs: pkg_resources.Distribution instances
@@ -132,7 +132,7 @@ def render_tree(pkgs, pkg_index, req_map, list_all,
     """
     non_top = set(r.key for r in flatten(req_map.values()))
     top = [p for p in pkgs if p.key not in non_top]
-
+    printed = set()
     def aux(pkg, indent=0, chain=None):
         if chain is None:
             chain = [pkg.project_name]
@@ -161,6 +161,9 @@ def render_tree(pkgs, pkg_index, req_map, list_all,
                 for d in pkg_deps
                 if d.project_name not in chain]
             result += list(flatten(filtered_deps))
+        if pkg.key in skip or pkg.key in printed:
+            result[0] = "# " + result[0]
+        printed.add(pkg.key)
         return result
 
     lines = flatten([aux(p) for p in (pkgs if list_all else top)])
@@ -226,10 +229,14 @@ def main():
                             'Inhibit warnings about possibly '
                             'confusing packages'
                         ))
+    parser.add_argument('-i', '--ignore', action='store_const', const='',
+        help=(
+            'Ignore these packages, separated'
+            'by commas'))
     args = parser.parse_args()
 
-    default_skip = ['setuptools', 'pip', 'python', 'distribute']
-    skip = default_skip + ['pipdeptree']
+    default_skip = ['setuptools', 'pip', 'python', 'distribute', 'pipdeptree']
+    skip = default_skip + args.ignore.split(',')
     pkgs = pip.get_installed_distributions(local_only=args.local_only,
                                            skip=skip)
 
@@ -269,7 +276,8 @@ def main():
                        req_map=req_map,
                        list_all=args.all,
                        top_pkg_str=top_pkg_str,
-                       non_top_pkg_str=non_top_pkg_str)
+                       non_top_pkg_str=non_top_pkg_str,
+                       skip=skip)
     print(tree)
     return 0
 
