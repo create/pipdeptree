@@ -229,7 +229,7 @@ def main():
                             'Inhibit warnings about possibly '
                             'confusing packages'
                         ))
-    parser.add_argument('-i', '--ignore', action='store_const', const='',
+    parser.add_argument('-i', '--ignore',
         help=(
             'Ignore these packages, separated'
             'by commas'))
