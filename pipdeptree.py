@@ -53,12 +53,12 @@ def non_top_pkg_name(req, pkg):
     req_ver = req_version(req)
     if req_ver:
         vers.append(('required', req_ver))
-    if pkg:
-        vers.append(('installed', pkg.version))
+    # if pkg:
+    #     vers.append(('installed', pkg.version))
     if not vers:
         return req.key
     ver_str = ', '.join(['{0}: {1}'.format(k, v) for k, v in vers])
-    return '{0} [{1}]'.format(top_pkg_name(pkg), '# '+ver_str)
+    return '{0} # [{1}]'.format(top_pkg_name(pkg), ver_str)
 
 
 def top_pkg_src(pkg):
@@ -246,15 +246,15 @@ def main():
                     pkg = top_pkg_name(p)
                     req = non_top_pkg_name(d, pkg_index[d.key])
                     tmpl = '  {0} -> {1}' if i > 0 else '* {0} -> {1}'
-                    print('#' + tmpl.format(pkg, req), file=sys.stderr)
-            print('#' + '-'*72, file=sys.stderr)
+                    print('# ' + tmpl.format(pkg, req), file=sys.stderr)
+            print('# ' + '-'*72, file=sys.stderr)
 
         is_empty, cyclic = peek_into(cyclic_deps(pkgs, pkg_index))
         if not is_empty:
             print('# Warning!!! Cyclic dependencies found:', file=sys.stderr)
             for xs in cyclic:
                 print('# - {0}'.format(xs), file=sys.stderr)
-            print('#' + '-'*72, file=sys.stderr)
+            print('# ' + '-'*72, file=sys.stderr)
 
     if args.freeze:
         top_pkg_str, non_top_pkg_str = top_pkg_src, non_top_pkg_src
