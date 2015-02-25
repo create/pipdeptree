@@ -55,10 +55,13 @@ def non_top_pkg_name(req, pkg):
         vers.append(('required', req_ver))
     # if pkg:
     #     vers.append(('installed', pkg.version))
-    if not vers:
+    if not vers and not pkg:
         return req.key
-    ver_str = ', '.join(['{0}: {1}'.format(k, v) for k, v in vers])
-    return '{0} # [{1}]'.format(top_pkg_name(pkg), ver_str)
+    if vers:
+        ver_str = ', '.join(['{0}: {1}'.format(k, v) for k, v in vers])
+        return '{0} # [{1}]'.format(top_pkg_name(pkg), ver_str)
+    else:
+        return top_pkg_name(pkg)
 
 
 def top_pkg_src(pkg):
