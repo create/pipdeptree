@@ -241,7 +241,7 @@ def main():
     if not args.nowarn:
         confusing = confusing_deps(req_map)
         if confusing:
-            print('# Warning!!! Possible confusing dependencies found:', file=sys.stderr)
+            print('# Warning!!! Possible confusing dependencies found:')
             for xs in confusing:
                 for i, (p, d) in enumerate(xs):
                     if d.key in skip:
@@ -249,15 +249,15 @@ def main():
                     pkg = top_pkg_name(p)
                     req = non_top_pkg_name(d, pkg_index[d.key])
                     tmpl = '  {0} -> {1}' if i > 0 else '* {0} -> {1}'
-                    print('# ' + tmpl.format(pkg, req), file=sys.stderr)
-            print('# ' + '-'*72, file=sys.stderr)
+                    print('# ' + tmpl.format(pkg, req))
+            print('# ' + '-'*72)
 
         is_empty, cyclic = peek_into(cyclic_deps(pkgs, pkg_index))
         if not is_empty:
-            print('# Warning!!! Cyclic dependencies found:', file=sys.stderr)
+            print('# Warning!!! Cyclic dependencies found:')
             for xs in cyclic:
-                print('# - {0}'.format(xs), file=sys.stderr)
-            print('# ' + '-'*72, file=sys.stderr)
+                print('# - {0}'.format(xs))
+            print('# ' + '-'*72)
 
     if args.freeze:
         top_pkg_str, non_top_pkg_str = top_pkg_src, non_top_pkg_src
