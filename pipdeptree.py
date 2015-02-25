@@ -58,7 +58,7 @@ def non_top_pkg_name(req, pkg):
     if not vers:
         return req.key
     ver_str = ', '.join(['{0}: {1}'.format(k, v) for k, v in vers])
-    return '{0} [{1}]'.format(top_pkg_name(pkg.project_name), '# '+ver_str)
+    return '{0} [{1}]'.format(top_pkg_name(pkg), '# '+ver_str)
 
 
 def top_pkg_src(pkg):
