@@ -58,7 +58,7 @@ def non_top_pkg_name(req, pkg):
     if not vers:
         return req.key
     ver_str = ', '.join(['{0}: {1}'.format(k, v) for k, v in vers])
-    return '{0} [{1}]'.format(pkg.project_name, ver_str)
+    return '{0} [{1}]'.format(top_pkg_name(pkg.project_name), '# '+ver_str)
 
 
 def top_pkg_src(pkg):
@@ -145,7 +145,7 @@ def render_tree(pkgs, pkg_index, req_map, list_all,
             # `pip.get_installed_distributions`
             # eg. `testresources`. This is a hack around it.
             name = pkg.project_name if dist is None else non_top_pkg_str(pkg, dist)
-            result = [' '*indent+'- '+name]
+            result = [' '*indent+name]
         else:
             result = [top_pkg_str(pkg)]
 
@@ -238,7 +238,7 @@ def main():
     if not args.nowarn:
         confusing = confusing_deps(req_map)
         if confusing:
-            print('Warning!!! Possible confusing dependencies found:', file=sys.stderr)
+            print('# Warning!!! Possible confusing dependencies found:', file=sys.stderr)
             for xs in confusing:
                 for i, (p, d) in enumerate(xs):
                     if d.key in skip:
@@ -246,15 +246,15 @@ def main():
                     pkg = top_pkg_name(p)
                     req = non_top_pkg_name(d, pkg_index[d.key])
                     tmpl = '  {0} -> {1}' if i > 0 else '* {0} -> {1}'
-                    print(tmpl.format(pkg, req), file=sys.stderr)
-            print('-'*72, file=sys.stderr)
+                    print('#' + tmpl.format(pkg, req), file=sys.stderr)
+            print('#' + '-'*72, file=sys.stderr)
 
         is_empty, cyclic = peek_into(cyclic_deps(pkgs, pkg_index))
         if not is_empty:
-            print('Warning!!! Cyclic dependencies found:', file=sys.stderr)
+            print('# Warning!!! Cyclic dependencies found:', file=sys.stderr)
             for xs in cyclic:
-                print('- {0}'.format(xs), file=sys.stderr)
-            print('-'*72, file=sys.stderr)
+                print('# - {0}'.format(xs), file=sys.stderr)
+            print('#' + '-'*72, file=sys.stderr)
 
     if args.freeze:
         top_pkg_str, non_top_pkg_str = top_pkg_src, non_top_pkg_src
