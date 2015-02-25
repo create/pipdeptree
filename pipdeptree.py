@@ -248,8 +248,6 @@ def main():
     args = parser.parse_args()
 
     skip = ['setuptools', 'pip', 'python', 'distribute', 'pipdeptree']
-    if args.ignore:
-        skip += args.ignore.split(',')
     pkgs = pip.get_installed_distributions(local_only=args.local_only,
                                            skip=skip)
 
@@ -284,6 +282,9 @@ def main():
     else:
         top_pkg_str, non_top_pkg_str = top_pkg_name, non_top_pkg_name
 
+    if args.ignore:
+        # Do not install those arguments asked to be ignored
+        skip += args.ignore.split(',')
     tree = render_tree(pkgs,
                        pkg_index=pkg_index,
                        req_map=req_map,
