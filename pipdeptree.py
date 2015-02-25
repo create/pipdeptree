@@ -174,7 +174,8 @@ def render_tree(pkgs, pkg_index, req_map, list_all,
                 if d.project_name not in chain]
             result += list(flatten(filtered_deps))
         if pkg.project_name in skip or pkg.key in printed:
-            result[0] = "# dup" + result[0].replace("\n", " ")
+            msg = "skip" if pkg.project_name in skip else "dup"
+            result[0] = "# " + result[0].replace("\n", " ") + " # {}".format(msg)
         printed.add(pkg.key)
         return result
 
