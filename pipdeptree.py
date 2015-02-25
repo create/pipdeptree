@@ -173,7 +173,7 @@ def render_tree(pkgs, pkg_index, req_map, list_all,
                 for d in pkg_deps
                 if d.project_name not in chain]
             result += list(flatten(filtered_deps))
-        if pkg.key in skip or pkg.key in printed:
+        if pkg.project_name in skip or pkg.key in printed:
             result[0] = "# " + result[0].replace("\n", " ")
         printed.add(pkg.key)
         return result
@@ -247,8 +247,9 @@ def main():
             'by commas'))
     args = parser.parse_args()
 
-    default_skip = ['setuptools', 'pip', 'python', 'distribute', 'pipdeptree']
-    skip = default_skip + args.ignore.split(',')
+    skip = ['setuptools', 'pip', 'python', 'distribute', 'pipdeptree']
+    if args.ignore:
+        skip += args.ignore.split(',')
     pkgs = pip.get_installed_distributions(local_only=args.local_only,
                                            skip=skip)
 
