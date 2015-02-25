@@ -77,7 +77,7 @@ def top_pkg_src(pkg):
     return str(pip.FrozenRequirement.from_dist(pkg, [])).strip()
 
 
-def non_top_pkg_src(_req, pkg):
+def non_top_pkg_src(req, pkg):
     """Returns frozen package name for non top level package
 
     :param _req: the requirements instance
